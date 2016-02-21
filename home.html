@@ -1,7 +1,126 @@
 <div class="row-fluid">
-	<div class="span10">
-		<div id="calender-container">
-			<div class="calender"></div>
+	<div class="title">
+		<h2>Create Event</h2>
+	</div>
+	<nav>
+	  <ul class="pager">
+	    <li class="disabled"><a href="#" id="previous-step">Previous</a></li>
+	    <li><a href="#" id="next-step">Next</a></li>
+	  </ul>
+	</nav>
+	<div class="col-xs-12 col-sm-6 col-md-6 create-event-form">
+	<!-- <form class="col-xs-12 col-sm-6 col-md-6 create-event-form" id="stepone"> -->
+		<div id="step1">
+	  		<div class="form-group ">
+	   			<label for="eventName">Event Name</label>
+	    		<input type="text" class="form-control" id="eventName">
+	  		</div>
+	 		<div class="form-group">
+	    		<label for="organizerName">Your Name</label>
+	    		<input type="text" class="form-control" id="organizerName" >
+	  		</div>
+	  		<div class="form-group">
+	  			<div class="span10">
+					<div id="calender-container">
+						<div class="calender"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="step2">
+			<table>
+				<thead></thead>
+				<tbody id="J_timedSheet">
+
+				</tbody>
+			</table>
 		</div>
 	</div>
+  		<!-- <button type="submit" class="btn btn-default">Submit</button> -->
+	<!-- </form> -->
+
 </div>
+<script>
+var step = 1;
+// $("#stepone").submit( function(e) {
+// 	e.preventDefault();
+// 	console.log($('#calender-container .calender').datepicker('getDates'));
+// });
+var meetup = {
+	dates: [],
+	name: "",
+	organizer: "",
+	validate_step1: function() {
+		if (this.dates.length <= 0) {
+			alert("You have to select at least one date");
+			return false;
+		} else if (this.name.length <= 0) {
+			alert("Please input the event name");
+			return false;
+		} else if (this.organizer.length <= 0) {
+			alert("Please input the organizer name")
+			return false;
+		}
+		return true;
+	}
+};
+$("#next-step").click(function(e) {
+	e.preventDefault();
+	++step;
+	if (step == 2) {
+		meetup.dates = $('#calender-container .calender').datepicker('getDates');
+		meetup.name = $("#eventName").val().trim();
+		meetup.organizer = $("#organizerName").val().trim();
+		if (!meetup.validate_step1()) {
+			--step;
+			return ;
+		}
+		$("#previous-step").parent().removeClass("disabled");
+		$("#step1").hide();
+		$("#step2").show();
+		var dimensions = [24, meetup.dates.length];
+		var dayList  = [];
+		for (var i = 0; i < meetup.dates.length; ++i) {
+			dayList.push({"name": moment(meetup.dates[i]).format("YYYY-MM-DD")});
+		}
+		var hourList = [
+		    {name:"00",title:"00:00-01:00"},{name:"01",title:"01:00-02:00"},{name:"02",title:"02:00-03:00"},{name:"03",title:"03:00-04:00"},
+		    {name:"04",title:"04:00-05:00"},{name:"05",title:"05:00-06:00"},{name:"06",title:"06:00-07:00"},{name:"07",title:"07:00-08:00"},
+		    {name:"08",title:"08:00-09:00"},{name:"09",title:"09:00-10:00"},{name:"10",title:"10:00-11:00"},{name:"11",title:"11:00-12:00"},
+		    {name:"12",title:"12:00-13:00"},{name:"13",title:"13:00-14:00"},{name:"14",title:"14:00-15:00"},{name:"15",title:"15:00-16:00"},
+		    {name:"16",title:"16:00-17:00"},{name:"17",title:"17:00-18:00"},{name:"18",title:"18:00-19:00"},{name:"19",title:"19:00-20:00"},
+		    {name:"20",title:"20:00-21:00"},{name:"21",title:"21:00-22:00"},{name:"22",title:"22:00-23:00"},{name:"23",title:"23:00-00:00"}
+		];
+		var sheetData = [];
+		var tempData = [];
+		for (var i = 0; i < dimensions[0]; ++i) {
+			tempData.push(0);
+		}
+		for (var i = 0; i < dimensions[1]; ++i) {
+			sheetData.push(tempData);
+		}
+
+		$("#J_timedSheet").TimeSheet({
+		  data: {
+		      dimensions : dimensions,
+		      rowHead : hourList,
+		      colHead : dayList,
+		      sheetHead : {name:"Time\\Date"},
+		      sheetData: sheetData
+		  }
+		});
+
+
+	} else if (step == 3) {
+
+	}
+});
+
+$("#previous-step").click(function(e) {
+	e.preventDefault();
+	--step;
+	if (step == 1) {
+		$("#previous-step").parent().addClass("disabled");
+	}
+});
+</script>

@@ -5,6 +5,7 @@ require.config({
 	    jquery: '../js/libs/jquery-1.12.0.min',
     	underscore: '../js/libs/underscore-min',
     	Backbone: '../js/libs/backbone-min',
+    	timesheet: '../js/libs/TimeSheet'
 	    },
 
 	    shim: {
@@ -26,6 +27,11 @@ require.config({
 	        "datepicker" : {
 	   			deps: ["bootstrap"],
 	    		exports: "$.fn.datepicker"
+			},
+
+			timesheet : {
+				deps: ["jquery"],
+				exports: "$.fn.TimeSheet"
 			}
 
 	    }
@@ -40,8 +46,9 @@ require(['Backbone',
 		 'libs/text!footer.html',
 		 'libs/text!location.html',   
 		 'datepicker',
-         'bootstrap'
-         ], function (Backbone,_,$,headerTpl, homeTpl, footerTpl, locationTpl, dp, bootstrap) {
+         'bootstrap',
+         'timesheet'
+         ], function (Backbone,_,$,headerTpl, homeTpl, footerTpl, locationTpl, dp, bootstrap, timesheet) {
 	
 	var ApplicationRouter = Backbone.Router.extend({
 		routes: {
