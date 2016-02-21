@@ -189,6 +189,11 @@ require(['Backbone',
 				attractions.push({"web_url": web_url, "name": name});
 			});
 
+			if (restaurants.length === 0 && attractions.length === 0) {
+				alert('Please choose at least one restaurant or activity');
+				return;
+			}
+
 			var postObj = {
 				"name": meetup.name,
 				"organizer": meetup.organizer,

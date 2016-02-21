@@ -45,6 +45,19 @@ function initAutocomplete() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
+    google.maps.event.addListener(map, 'click', function(event) {
+       placeMarker(event.latLng);
+    });
+
+    function placeMarker(location) {
+        var marker = new google.maps.Marker({
+            position: location, 
+            map: map
+        });
+        $('#submitLocation').removeClass('disabled');
+        lat = location.lat();
+        lng = location.lng();
+    }
     // Create the search box and link it to the UI element.
     var input = document.getElementById('pac-input');
     var searchBox = new google.maps.places.SearchBox(input);
