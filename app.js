@@ -41,10 +41,11 @@ require.config({
 require(['Backbone',
          'underscore',
          'jquery',
-		 'libs/text!header.html', 
-		 'libs/text!home.html', 
+		 'libs/text!header.html',
+		 'libs/text!home.html',
 		 'libs/text!footer.html',
-		 'libs/text!location.html',   
+		 'libs/text!location.html',
+		 'libs/text!meetups.html',
 		 'datepicker',
          'bootstrap',
          'timesheet'
@@ -55,7 +56,8 @@ require(['Backbone',
 	var ApplicationRouter = Backbone.Router.extend({
 		routes: {
 			"": "home",
-			"location": "location"
+			"location": "location",
+			"meetups/:id": "meetups"
 		},
 		initialize: function() {
 			this.headerView = new HeaderView();
@@ -70,6 +72,10 @@ require(['Backbone',
 		location: function() {
 			this.locationView = new LocationView();
 			this.locationView.render();
+		},
+		meetups: function(id) {
+			this.meetupsView = new MeetupsView();
+			this.meetupsView.render(id);
 		}
 	});
 
@@ -81,7 +87,7 @@ require(['Backbone',
 		initialize: function() {
 			$.get(this.templateFileName, function(data){
 				this.template=data
-			});		
+			});
 		},
 		render: function() {
 			$(this.el).html(_.template(this.template));
@@ -182,10 +188,63 @@ require(['Backbone',
 			// });
 		}
 	});
-	
-	
+
+	MeetupsView = Backbone.View.extend({
+		el: "#content",
+		template: meetupsTpl,
+		initialize: function() {
+
+		},
+		mid: 0,
+		render: function(id) {
+			var self = this;
+			this.mid = id;
+	        $.ajax({
+	            url: "http://xrav3nz.flowca.st/meetups/" + id,
+	            success:function(result){
+					$(self.el).html(_.template(self.template)({"result": result}));
+	            },
+	            error:function(result){
+	            	alert(result.responseJSON.message);
+	            }
+	        });
+		},
+		events: {
+			"submit": "vote"
+		},
+		vote: function(event) {
+			event.preventDefault();
+			var timeslot_ids = [];
+			var activity_ids = [];
+			var self = this;
+			$(this.el).find('input:checked').each(function() {
+				if($(this).attr('name') == "activities") {
+					activity_ids.push($(this).val());
+				} else {
+					timeslot_ids.push($(this).val());
+				}
+			});
+	        $.ajax({
+	            url: "http://xrav3nz.flowca.st/meetups/" + self.mid,
+	            method: "PUT",
+	            contentType: "application/json",
+	            data: JSON.stringify({
+	            	"timeslot_ids": timeslot_ids,
+	            	"activity_ids": activity_ids
+	            }),
+	            success:function(result){
+					self.render(self.mid);
+	            },
+	            error:function(result){
+	            	alert(result.responseJSON.message);
+	            }
+	        });
+		}
+	});
+
+
 	app = new ApplicationRouter();
-	Backbone.history.start();	
+	Backbone.history.start();
 });
 
 
