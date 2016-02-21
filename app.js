@@ -49,7 +49,7 @@ require(['Backbone',
          'bootstrap',
          'timesheet'
          ], function (Backbone,_,$,headerTpl, homeTpl, footerTpl, meetupsTpl, dp, bootstrap, timesheet) {
-	
+
     var rootURL = 'http://xrav3nz.flowca.st/';
 
 	var ApplicationRouter = Backbone.Router.extend({
@@ -246,6 +246,18 @@ require(['Backbone',
 		},
 		vote: function(event) {
 			event.preventDefault();
+			// check if the user has voted already
+			var name = this.mid + "=";
+			var ca = document.cookie.split(';');
+			for(var i=0; i<ca.length; i++) {
+				var c = ca[i];
+				while (c.charAt(0)==' ') c = c.substring(1);
+				if (c.indexOf(name) == 0) {
+					alert("You have voted on this event");
+					return ;
+				}
+			}
+
 			var timeslot_ids = [];
 			var activity_ids = [];
 			var self = this;
@@ -265,6 +277,11 @@ require(['Backbone',
 	            	"activity_ids": activity_ids
 	            }),
 	            success:function(result){
+	            	// set the cookie after the user has voted
+					var d = new Date();
+					d.setTime(d.getTime() + (1*24*60*60*1000));
+					var expires = "expires="+d.toUTCString();
+					document.cookie = self.mid + "=" + 1 + "; " + expires;
 					self.render(self.mid);
 	            },
 	            error:function(result){
