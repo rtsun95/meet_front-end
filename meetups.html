@@ -1,0 +1,44 @@
+<div>
+
+<h2><%= result.name %></h2>
+You have been invited to <strong><%= result.organizer %>'s</strong> event
+<form id="vote_meetups">
+    <div>
+        <h3>Time Slots</h3>
+        <% _.each(result.timeslots, function(ts){ %>
+            <div class="form-group">
+                <input type="checkbox" name="timeslots" id="<%= ts.id %>" value="<%= ts.id %>">
+                <label for="<%= ts.id %>">
+                    from <%= ts.start_time %> to <%= ts.end_time %>
+                    <%= ts.votes %> votes
+                </label>
+            </div>
+        <% }); %>
+    </div>
+    <div>
+        <h3>Activities</h3>
+        <% _.each(result.activities, function(ac){ %>
+            <div class="form-group">
+                <input type="checkbox" name="activities" id="<%= ac.id %>" value="<%= ac.id %>">
+                <label for="<%= ac.id %>">
+                    <a href="<%= ac.web_url %>" target="_blank"><%= ac.name %></a>
+                    <%= ac.votes %> votes
+                </label>
+            </div>
+        <% }); %>
+    </div>
+    <div>
+        <h3>Restaurants</h3>
+        <% _.each(result.restaurants, function(re){ %>
+            <div class="form-group">
+                <input type="checkbox" name="activities" id="<%= re.id %>" value="<%= re.id %>">
+                <label for="<%= re.id %>">
+                    <a href="<%= re.web_url %>" target="_blank"><%= re.name %></a>
+                    <%= re.votes %> votes
+                </label>
+            </div>
+        <% }); %>
+    </div>
+    <input type="submit" value="Vote!" />
+</form>
+</div>
