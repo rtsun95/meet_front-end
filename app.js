@@ -178,14 +178,14 @@ require(['Backbone',
 			$('label.restaurantLabel.active').each(function (index) {
 				var t = $(this);
 				var name = t.data('name');
-				var web_url = t.find('a').attr('href');
+				var web_url = t.parent().find('a').attr('href');
 				restaurants.push({"web_url": web_url, "name": name});
 			});
 
 			$('label.attractionLabel.active').each(function (index) {
 				var t = $(this);
 				var name = t.data('name');
-				var web_url = t.find('a').attr('href');
+				var web_url = t.parent().find('a').attr('href');
 				attractions.push({"web_url": web_url, "name": name});
 			});
 
@@ -197,13 +197,22 @@ require(['Backbone',
     			"restaurants": restaurants
 			}
 
-			jQuery.post(url, postObj, function (data) {
-				var id = data.id;
-				var password = data.password;
-				console.log(id, password)
-				var route = 'meetups/' + id;
-				ApplicationRouter.navigate(route, true);
-			});
+			$.ajax({
+	            url: url,
+	            method: "POST",
+	            contentType: "application/json",
+	            data: JSON.stringify(postObj),
+	            success:function(data){
+					var id = data.id;
+					var password = data.password;
+					console.log(id, password)
+					var route = '#/meetups/' + id;
+					window.location.assign(route);
+	            },
+	            error:function(result){
+	            	alert(result.responseJSON.message);
+	            }
+	        });
 		}
 	});
 
