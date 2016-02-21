@@ -48,9 +48,9 @@ require(['Backbone',
 		 'datepicker',
          'bootstrap',
          'timesheet'
-         ], function (Backbone,_,$,headerTpl, homeTpl, footerTpl, dp, bootstrap, timesheet) {
+         ], function (Backbone,_,$,headerTpl, homeTpl, footerTpl, meetupsTpl, dp, bootstrap, timesheet) {
 	
-    var rootURL = 'http://xrav3nz.flowca.st';
+    var rootURL = 'http://xrav3nz.flowca.st/';
 
 	var ApplicationRouter = Backbone.Router.extend({
 		routes: {
@@ -120,7 +120,7 @@ require(['Backbone',
 				console.log("need lat, lng");
 				return;
 			}
-			var url = rootURL + '/restaurants/' + lat + ',' + lng + '?count=15';
+			var url = rootURL + 'restaurants/' + lat + ',' + lng + '?count=15';
 			console.log(url);
 			jQuery.get(url, function (data) {
 				$('#getInfo').hide();
@@ -142,7 +142,7 @@ require(['Backbone',
 				});
 			});
 
-			var url = rootURL + '/attractions/' + lat + ',' + lng + '?count=15';
+			var url = rootURL + 'attractions/' + lat + ',' + lng + '?count=15';
 			console.log(url);
 			jQuery.get(url, function (data) {
 				$('#getInfo').hide();
@@ -174,7 +174,7 @@ require(['Backbone',
 		submitData: function () {
 			var restaurants = [];
 			var attractions = [];
-			var url = rootURL + '/meetups';
+			var url = rootURL + 'meetups';
 			$('label.restaurantLabel.active').each(function (index) {
 				var t = $(this);
 				var name = t.data('name');
@@ -198,9 +198,11 @@ require(['Backbone',
 			}
 
 			jQuery.post(url, postObj, function (data) {
-				id = data.id;
-				password = data.password;
+				var id = data.id;
+				var password = data.password;
 				console.log(id, password)
+				var route = 'meetups/' + id;
+				ApplicationRouter.navigate(route, true);
 			});
 		}
 	});
