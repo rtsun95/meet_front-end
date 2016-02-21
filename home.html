@@ -1,45 +1,51 @@
-<div class="row-fluid">
-	<div class="title">
-		<h2>Create Event</h2>
-	</div>
-	<nav>
-	  <ul class="pager">
-	    <li class="disabled"><a href="#" id="previous-step">Previous</a></li>
-	    <li><a href="#" id="next-step">Next</a></li>
-	  </ul>
-	</nav>
-	<div class="col-xs-12 col-sm-6 col-md-6 create-event-form">
-	<!-- <form class="col-xs-12 col-sm-6 col-md-6 create-event-form" id="stepone"> -->
-		<div id="step1">
-	  		<div class="form-group ">
-	   			<label for="eventName">Event Name</label>
-	    		<input type="text" class="form-control" id="eventName">
-	  		</div>
-	 		<div class="form-group">
-	    		<label for="organizerName">Your Name</label>
-	    		<input type="text" class="form-control" id="organizerName" >
-	  		</div>
-	  		<div class="form-group">
-	  			<div class="span10">
-					<div id="calender-container">
-						<div class="calender"></div>
+<div class="page-container">
+	<div class="row-fluid">
+		<div class="title">
+			<h2>Create Event</h2>
+		</div>
+		<nav>
+		  <ul class="pager">
+		    <li class="disabled"><a href="#" id="previous-step">Previous</a></li>
+		    <li><a href="#" id="next-step">Next</a></li>
+		  </ul>
+		</nav>
+		<div class="row">
+			<div class="create-event-form col-xs-6 col-sm-4 col-md-4">
+			<!-- <form class="col-xs-12 col-sm-6 col-md-6 create-event-form" id="stepone"> -->
+				<div id="step1">
+			  		<div class="form-group ">
+			   			<label for="eventName">Event Name</label>
+			    		<input type="text" class="form-control" id="eventName">
+			  		</div>
+			 		<div class="form-group">
+			    		<label for="organizerName">Your Name</label>
+			    		<input type="text" class="form-control" id="organizerName" >
+			  		</div>
+			  		<div class="form-group">
+							<div id="calender-container">
+								<div class="calender"></div>
+							</div>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div id="step2">
-			<table>
-				<thead></thead>
-				<tbody id="J_timedSheet">
+				<div id="step2" style="display:none">
+					<p>Left-click and drag to select the time slots that work for you. Right-click and drag to deselect. </p>
+					<table class="time-table">
+						<thead></thead>
+						<tbody id="J_timedSheet">
 
-				</tbody>
-			</table>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		  		<!-- <button type="submit" class="btn btn-default">Submit</button> -->
+			<!-- </form> -->
 		</div>
 	</div>
   		<!-- <button type="submit" class="btn btn-default">Submit</button> -->
 	<!-- </form> -->
 
 </div>
+
 <script>
 var step = 1;
 var sheet;
