@@ -43,6 +43,8 @@ require(['Backbone',
          'bootstrap'
          ], function (Backbone,_,$,headerTpl, homeTpl, footerTpl, locationTpl, dp, bootstrap) {
 	
+    var rootURL = 'http://xrav3nz.flowca.st';
+
 	var ApplicationRouter = Backbone.Router.extend({
 		routes: {
 			"": "home",
@@ -110,6 +112,67 @@ require(['Backbone',
 		},
 		render: function() {
 			$(this.el).html(_.template(this.template));
+		},
+		events: {
+			"click #submitLocation": "getRestaurants",
+			"click .restaurantLabel": "toggleSelection",
+			"click #submitResto": "submitResto"
+		},
+		getRestaurants: function() {
+			if (lat === undefined || lng === undefined) {
+				console.log("need lat, lng");
+				return;
+			}
+			var url = rootURL + '/restaurants/' + lat + ',' + lng + '?count=10';
+			console.log(url);
+			jQuery.get(url, function (data) {
+				$('#getInfo').hide();
+				$('#showInfo').show();
+				data.results.forEach(function (restaurant) {
+					var name = restaurant.name;
+					var url = restaurant.web_url;
+
+					var label = "<label class='btn btn-primary restaurantLabel' data-name='" + name + "''>";
+					label += name;
+					label += "<br />";
+					label += "<a href='" + url + "' target='_blank'>";
+					label += 'See on TripAdvisor';
+					label += "</a>";
+					label += "</label>";
+
+					$('#rList').append(label);
+				});
+			});
+		},
+		toggleSelection: function (e) {
+		    if ($(e.currentTarget).hasClass('active')) {
+		        $(e.currentTarget).removeClass('active');
+		    } else {
+		        $(e.currentTarget).addClass('active');
+		    }
+		},
+		submitResto: function () {
+			var restaurants = [];
+			var url = rootURL + '/meetups';
+			$('label.restaurantLabel.active').each(function (index) {
+				var t = $(this);
+				var name = t.data('name');
+				var web_url = t.find('a').attr('href');
+				restaurants.push({"web_url": web_url, "name": name});
+			});
+
+			// var postObj = {
+			// 	"name":,
+			// 	"organizer":,
+			// 	"timeslots":,
+   //  			"activities":,
+   //  			"restaurants": restaurants
+			// }
+
+			// jQuery.post(url, postObj, function (data) {
+			// 	id = data.id;
+			// 	password = data.password;
+			// });
 		}
 	});
 	
