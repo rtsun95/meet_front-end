@@ -10,7 +10,7 @@
 		  </ul>
 		</nav>
 		<div class="row">
-			<div class="create-event-form col-xs-6 col-sm-4 col-md-4">
+			<div class="create-event-form">
 			<!-- <form class="col-xs-12 col-sm-6 col-md-6 create-event-form" id="stepone"> -->
 				<div id="step1">
 			  		<div class="form-group ">
@@ -36,6 +36,29 @@
 						</tbody>
 					</table>
 				</div>
+				<script type="text/javascript" src="location.js"></script>
+				<div id="step3" style="display:none">
+
+					<div id="getInfo">
+						<div id="left">
+							<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+							<button id="submitLocation" type="button" class="btn btn-primary disabled">Submit Location</button>
+						</div>
+						<div id="right">
+							<div id="map"></div>
+						</div>
+					</div>
+					<div id="showInfo">
+						<ul id="lList">
+							<h3>Restaurants</h3>
+						</ul>
+						<ul id="rList">
+							<h3>Attractions</h3>
+						</ul>
+						<button id="submitData" type="button" class="btn btn-primary">Submit Selection</button>
+					</div>
+
+				</div>
 			</div>
 		  		<!-- <button type="submit" class="btn btn-default">Submit</button> -->
 			<!-- </form> -->
@@ -43,7 +66,7 @@
 	</div>
   		<!-- <button type="submit" class="btn btn-default">Submit</button> -->
 	<!-- </form> -->
-
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3FaCVTWCw8mQW5GzwTxzv8qNYTW1iFzg&libraries=places" async defer></script>
 </div>
 
 <script>
@@ -149,7 +172,11 @@ $("#next-step").click(function(e) {
 			alert("You have to select at least one time slot");
 			return ;
 		}
-		console.log(meetup.timeslots);
+
+		$("#step2").hide();
+		$("#step3").show();
+		initAutocomplete();
+		$("#next-step").parent().addClass("disabled");
 	}
 });
 
@@ -157,9 +184,14 @@ $("#previous-step").click(function(e) {
 	e.preventDefault();
 	--step;
 	if (step == 1) {
+		meetup.timeslots = [];
 		$("#previous-step").parent().addClass("disabled");
 		$("#step2").hide();
 		$("#step1").show();
+	} else if (step == 2) {
+		$("#next-step").parent().removeClass("disabled");
+		$("#step3").hide();
+		$("#step2").show();
 	}
 });
 </script>
