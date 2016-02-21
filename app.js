@@ -37,15 +37,16 @@ require(['Backbone',
          'jquery',
 		 'libs/text!header.html', 
 		 'libs/text!home.html', 
-		 'libs/text!footer.html',  
+		 'libs/text!footer.html',
+		 'libs/text!location.html',   
 		 'datepicker',
          'bootstrap'
-         ], function (Backbone,_,$,headerTpl, homeTpl, footerTpl, dp, bootstrap) {
+         ], function (Backbone,_,$,headerTpl, homeTpl, footerTpl, locationTpl, dp, bootstrap) {
 	
 	var ApplicationRouter = Backbone.Router.extend({
 		routes: {
 			"": "home",
-			"*actions": "home"
+			"location": "location"
 		},
 		initialize: function() {
 			this.headerView = new HeaderView();
@@ -56,6 +57,10 @@ require(['Backbone',
 		home: function() {
 			this.homeView = new HomeView();
 			this.homeView.render();
+		},
+		location: function() {
+			this.locationView = new LocationView();
+			this.locationView.render();
 		}
 	});
 
@@ -65,7 +70,9 @@ require(['Backbone',
 		template: headerTpl,
 
 		initialize: function() {
-			$.get(this.templateFileName, function(data){console.log(data);this.template=data});		
+			$.get(this.templateFileName, function(data){
+				this.template=data
+			});		
 		},
 		render: function() {
 			$(this.el).html(_.template(this.template));
@@ -78,7 +85,8 @@ require(['Backbone',
 		render: function() {
 			this.$el.html(_.template(this.template));
 		}
-	})
+	});
+
 	HomeView = Backbone.View.extend({
 		el: "#content",
 		template: "home.html",
@@ -93,6 +101,18 @@ require(['Backbone',
 			});
 		}
 	});
+
+	LocationView = Backbone.View.extend({
+		el: "#content",
+		template: locationTpl,
+		initialize: function() {
+
+		},
+		render: function() {
+			$(this.el).html(_.template(this.template));
+		}
+	});
+	
 	
 	app = new ApplicationRouter();
 	Backbone.history.start();	
