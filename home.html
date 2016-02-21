@@ -42,12 +42,14 @@
 </div>
 <script>
 var step = 1;
+var sheet;
 // $("#stepone").submit( function(e) {
 // 	e.preventDefault();
 // 	console.log($('#calender-container .calender').datepicker('getDates'));
 // });
 var meetup = {
 	dates: [],
+	timeslots: [],
 	name: "",
 	organizer: "",
 	validate_step1: function() {
@@ -61,6 +63,9 @@ var meetup = {
 			alert("Please input the organizer name")
 			return false;
 		}
+		this.dates.sort(function(a, b){
+			return moment(a).isBefore(b) ? -1 : 1;
+		});
 		return true;
 	}
 };
@@ -100,7 +105,7 @@ $("#next-step").click(function(e) {
 			sheetData.push(tempData);
 		}
 
-		$("#J_timedSheet").TimeSheet({
+		sheet = $("#J_timedSheet").TimeSheet({
 		  data: {
 		      dimensions : dimensions,
 		      rowHead : hourList,
@@ -112,7 +117,33 @@ $("#next-step").click(function(e) {
 
 
 	} else if (step == 3) {
-
+		var sheetData = sheet.getSheetStates();
+		var start_time = -1;
+		for (var j = 0; j < sheetData[0].length; ++j) {
+			for (var i = 0; i < sheetData.length; ++i) {
+				if (sheetData[i][j] && start_time == -1) {
+					start_time = i;
+				} else if (sheetData[i][j] == 0 && start_time != -1) {
+					meetup.timeslots.push({
+						start_time: moment(meetup.dates[j]).add(start_time, 'hours').format("YYYY-MM-DD HH:mm:ss"),
+						end_time: moment(meetup.dates[j]).add(i, 'hours').format("YYYY-MM-DD HH:mm:ss")
+					});
+					start_time = -1;
+				}
+			}
+			if (start_time != -1) {
+				meetup.timeslots.push({
+					start_time: moment(meetup.dates[j]).add(start_time, 'hours').format("YYYY-MM-DD HH:mm:ss"),
+					end_time: moment(meetup.dates[j]).add(1, 'days').format("YYYY-MM-DD HH:mm:ss")
+				});
+				start_time = -1;
+			}
+		}
+		if (meetup.timeslots.length <= 0) {
+			alert("You have to select at least one time slot");
+			return ;
+		}
+		console.log(meetup.timeslots);
 	}
 });
 
@@ -121,6 +152,8 @@ $("#previous-step").click(function(e) {
 	--step;
 	if (step == 1) {
 		$("#previous-step").parent().addClass("disabled");
+		$("#step2").hide();
+		$("#step1").show();
 	}
 });
 </script>
