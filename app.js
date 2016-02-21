@@ -44,19 +44,17 @@ require(['Backbone',
 		 'libs/text!header.html',
 		 'libs/text!home.html',
 		 'libs/text!footer.html',
-		 'libs/text!location.html',
 		 'libs/text!meetups.html',
 		 'datepicker',
          'bootstrap',
          'timesheet'
-         ], function (Backbone,_,$,headerTpl, homeTpl, footerTpl, locationTpl, dp, bootstrap, timesheet) {
+         ], function (Backbone,_,$,headerTpl, homeTpl, footerTpl, dp, bootstrap, timesheet) {
 	
     var rootURL = 'http://xrav3nz.flowca.st';
 
 	var ApplicationRouter = Backbone.Router.extend({
 		routes: {
 			"": "home",
-			"location": "location",
 			"meetups/:id": "meetups"
 		},
 		initialize: function() {
@@ -68,10 +66,6 @@ require(['Backbone',
 		home: function() {
 			this.homeView = new HomeView();
 			this.homeView.render();
-		},
-		location: function() {
-			this.locationView = new LocationView();
-			this.locationView.render();
 		},
 		meetups: function(id) {
 			this.meetupsView = new MeetupsView();
@@ -114,29 +108,19 @@ require(['Backbone',
 			$("#calender-container .calender").datepicker({
    				multidate: true
 			});
-		}
-	});
-
-	LocationView = Backbone.View.extend({
-		el: "#content",
-		template: locationTpl,
-		initialize: function() {
-
-		},
-		render: function() {
-			$(this.el).html(_.template(this.template));
 		},
 		events: {
 			"click #submitLocation": "getRestaurants",
 			"click .restaurantLabel": "toggleSelection",
-			"click #submitResto": "submitResto"
+			"click .attractionLabel": "toggleSelection",
+			"click #submitData": "submitData"
 		},
 		getRestaurants: function() {
 			if (lat === undefined || lng === undefined) {
 				console.log("need lat, lng");
 				return;
 			}
-			var url = rootURL + '/restaurants/' + lat + ',' + lng + '?count=10';
+			var url = rootURL + '/restaurants/' + lat + ',' + lng + '?count=15';
 			console.log(url);
 			jQuery.get(url, function (data) {
 				$('#getInfo').hide();
@@ -145,13 +129,36 @@ require(['Backbone',
 					var name = restaurant.name;
 					var url = restaurant.web_url;
 
-					var label = "<label class='btn btn-primary restaurantLabel' data-name='" + name + "''>";
+					var label = "<li>"
+					label += "<label class='btn btn-info restaurantLabel' data-name='" + name + "''>";
 					label += name;
-					label += "<br />";
+					label += "</label>";
 					label += "<a href='" + url + "' target='_blank'>";
 					label += 'See on TripAdvisor';
 					label += "</a>";
+					label += "</li>"
+
+					$('#lList').append(label);
+				});
+			});
+
+			var url = rootURL + '/attractions/' + lat + ',' + lng + '?count=15';
+			console.log(url);
+			jQuery.get(url, function (data) {
+				$('#getInfo').hide();
+				$('#showInfo').show();
+				data.results.forEach(function (attraction) {
+					var name = attraction.name;
+					var url = attraction.web_url;
+
+					var label = "<li>"
+					label += "<label class='btn btn-success attractionLabel' data-name='" + name + "''>";
+					label += name;
 					label += "</label>";
+					label += "<a href='" + url + "' target='_blank'>";
+					label += 'See on TripAdvisor';
+					label += "</a>";
+					label += "</li>"
 
 					$('#rList').append(label);
 				});
@@ -164,8 +171,9 @@ require(['Backbone',
 		        $(e.currentTarget).addClass('active');
 		    }
 		},
-		submitResto: function () {
+		submitData: function () {
 			var restaurants = [];
+			var attractions = [];
 			var url = rootURL + '/meetups';
 			$('label.restaurantLabel.active').each(function (index) {
 				var t = $(this);
@@ -174,18 +182,26 @@ require(['Backbone',
 				restaurants.push({"web_url": web_url, "name": name});
 			});
 
-			// var postObj = {
-			// 	"name":,
-			// 	"organizer":,
-			// 	"timeslots":,
-   //  			"activities":,
-   //  			"restaurants": restaurants
-			// }
+			$('label.attractionLabel.active').each(function (index) {
+				var t = $(this);
+				var name = t.data('name');
+				var web_url = t.find('a').attr('href');
+				attractions.push({"web_url": web_url, "name": name});
+			});
 
-			// jQuery.post(url, postObj, function (data) {
-			// 	id = data.id;
-			// 	password = data.password;
-			// });
+			var postObj = {
+				"name": meetup.name,
+				"organizer": meetup.organizer,
+				"timeslots": meetup.timeslots,
+    			"activities": attractions,
+    			"restaurants": restaurants
+			}
+
+			jQuery.post(url, postObj, function (data) {
+				id = data.id;
+				password = data.password;
+				console.log(id, password)
+			});
 		}
 	});
 
@@ -241,7 +257,6 @@ require(['Backbone',
 	        });
 		}
 	});
-
 
 	app = new ApplicationRouter();
 	Backbone.history.start();

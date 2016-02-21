@@ -61,6 +61,8 @@ function initAutocomplete() {
     searchBox.addListener('places_changed', function() {
         var places = searchBox.getPlaces();
 
+        $('#submitLocation').removeClass('disabled');
+
         if (places.length == 0) {
             return;
         }
@@ -73,6 +75,9 @@ function initAutocomplete() {
 
         // For each place, get the icon, name and location.
         var bounds = new google.maps.LatLngBounds();
+
+        lat = places[0].geometry.location.lat();
+        lng = places[0].geometry.location.lng();
 
         places.forEach(function(place) {
             var icon = {

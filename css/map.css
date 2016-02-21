@@ -4,7 +4,6 @@
 }
 
 .controls {
-  margin-top: 10px;
   border: 1px solid transparent;
   border-radius: 2px 0 0 2px;
   box-sizing: border-box;
@@ -46,4 +45,27 @@
 }
 #showInfo {
   display: none;
+}
+#getInfo {
+  width: 500px;
+  margin: 0 auto;
+}
+#submitLocation {
+  float: right;
+}
+.restaurantLabel, .attractionLabel {
+  width: 250px;
+  margin-right: 25px;
+  margin-top: 2px !important;
+  margin-bottom: 2px !important;
+}
+#rList, #lList {
+  list-style-type: none;
+  width: 45%
+}
+#lList {
+  float: left;
+}
+#rList {
+  float: right;;
 }
